@@ -1,0 +1,1 @@
+- [Commit cadence](commit-cadence.md) — o usuário quer cada alteração deste repositório registrada em commit.
