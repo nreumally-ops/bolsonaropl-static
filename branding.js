@@ -72,7 +72,7 @@
       const logo = document.createElement("img");
       logo.src = "/assets/flavio-bolsonaro-logo.png";
       logo.alt = "Logotipo do Partido Liberal";
-      logo.className = "h-10 w-10 rounded-xl border border-white/15 object-cover";
+      logo.className = "h-10 w-10 rounded-xl object-cover";
 
       const name = document.createElement("span");
       name.textContent = "Flávio Bolsonaro";
