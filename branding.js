@@ -16,7 +16,52 @@
     },
   };
 
+  function backgroundVideos() {
+    return Array.from(document.querySelectorAll("video")).filter((video) => {
+      try {
+        return new URL(video.currentSrc || video.src, window.location.href).pathname ===
+          "/bolsonaropl.mp4";
+      } catch {
+        return false;
+      }
+    });
+  }
+
+  function enforceSingleBackgroundPlayer() {
+    const videos = backgroundVideos();
+    videos.forEach((video, index) => {
+      if (index === 0) return;
+      video.muted = true;
+      video.pause();
+      video.dataset.brandingDuplicate = "true";
+    });
+  }
+
+  function handleBackgroundVisibility() {
+    const videos = backgroundVideos();
+    if (document.hidden) {
+      videos.forEach((video, index) => {
+        if (index === 0) {
+          video.dataset.brandingPreviousMuted = String(video.muted);
+        }
+        video.pause();
+        video.muted = true;
+      });
+      return;
+    }
+
+    const primary = videos.find((video) => video.dataset.brandingDuplicate !== "true");
+    if (!primary || !primary.paused) return;
+
+    primary.muted = primary.dataset.brandingPreviousMuted !== "false";
+    primary.play().catch(() => {
+      primary.muted = true;
+      primary.dataset.brandingPreviousMuted = "true";
+    });
+  }
+
   function applyBranding() {
+    enforceSingleBackgroundPlayer();
     if (window.location.pathname !== "/") return;
 
     const lang = localStorage.getItem("ikiss_lang") === "EN" ? "EN" : "PT";
@@ -79,6 +124,7 @@
     subtree: true,
     characterData: true,
   });
+  document.addEventListener("visibilitychange", handleBackgroundVisibility);
 
   applyBranding();
 })();
