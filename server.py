@@ -14,6 +14,7 @@ PUBLIC_FILES = {
     if path.is_file()
     and path.suffix.lower() in {".html", ".png", ".jpg", ".jpeg", ".svg", ".ico", ".mp3", ".mp4", ".webp"}
 }
+PUBLIC_FILES.add("branding.js")
 
 
 class SiteHandler(SimpleHTTPRequestHandler):
