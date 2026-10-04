@@ -71,18 +71,26 @@
     const style = document.createElement("style");
     style.id = "campaign-market-styles";
     style.textContent = `
+      body {
+        background: #000 !important;
+        color: #fff !important;
+      }
       #root section.campaign-hero {
         min-height: min(760px, 82svh) !important;
         padding-top: 104px !important;
         padding-bottom: 48px !important;
       }
-      #root section.campaign-market {
+      #root .campaign-app-shell {
+        min-height: 0 !important;
+      }
+      #root [data-campaign-hidden="true"] {
+        display: none !important;
+      }
+      section.campaign-market {
         box-sizing: border-box;
         padding: 56px 20px 76px;
         scroll-margin-top: 72px;
-        background:
-          radial-gradient(ellipse at 50% 0%, rgba(34, 197, 94, 0.09), transparent 58%),
-          rgba(3, 8, 6, 0.88);
+        background: #000;
       }
       .market-shell {
         box-sizing: border-box;
@@ -289,6 +297,71 @@
         text-align: right;
         text-transform: uppercase;
       }
+      .market-shell {
+        max-width: 920px;
+        padding: 16px 24px;
+        overflow: visible;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        color: #fff;
+        font-family: inherit;
+      }
+      .market-label {
+        margin: 0 0 6px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .market-count {
+        display: block;
+        margin: 0;
+        color: #fff;
+        font-size: clamp(48px, 9vw, 78px);
+        font-variant-numeric: tabular-nums;
+        font-weight: 700;
+        letter-spacing: -0.06em;
+        line-height: 1;
+      }
+      .market-chart {
+        margin-top: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+      .market-chart svg {
+        height: clamp(180px, 30vw, 250px);
+        margin-top: 0;
+      }
+      .market-chart-grid {
+        stroke: rgba(255, 255, 255, 0.14);
+      }
+      .market-chart-line {
+        stroke: #fff;
+        stroke-width: 2;
+      }
+      .market-dates {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.46);
+        font-size: 10px;
+      }
+      .market-status {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        clip-path: inset(50%);
+      }
       @media (max-width: 780px) {
         #root section.campaign-hero {
           min-height: min(720px, 84svh) !important;
@@ -324,12 +397,15 @@
           min-height: min(700px, 82svh) !important;
           padding-inline: 18px !important;
         }
-        #root section.campaign-market {
+        section.campaign-market {
           padding: 34px 13px 50px;
         }
         .market-shell {
           padding: 20px 15px;
-          border-radius: 14px;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          box-shadow: none;
         }
         .market-topline {
           font-size: 8px;
@@ -341,6 +417,14 @@
         .market-chart {
           grid-column: auto;
           grid-row: auto;
+          margin-top: 20px;
+          padding: 0;
+          border: 0;
+          background: transparent;
+        }
+        .market-chart svg {
+          height: 190px;
+          margin-top: 0;
         }
         .market-total {
           min-height: 150px;
@@ -362,33 +446,11 @@
 
   function updateMarket(market, stats) {
     const total = market.querySelector("[data-support-total]");
-    const added = market.querySelector("[data-support-added]");
-    const today = market.querySelector("[data-support-today]");
-    const change = market.querySelector("[data-support-change]");
-    const baseline = market.querySelector("[data-support-baseline]");
-    const resumedAt = market.querySelector("[data-support-resumed]");
-    const status = market.querySelector("[data-support-status]");
     const line = market.querySelector("[data-support-line]");
     const area = market.querySelector("[data-support-area]");
     const dates = market.querySelector("[data-support-dates]");
 
     if (total) total.textContent = formatCount(stats.total);
-    if (added) added.textContent = formatCount(stats.added);
-    if (today) today.textContent = formatCount(stats.today);
-    if (baseline) baseline.textContent = formatCount(stats.baseline);
-    if (change) {
-      const percentage = Number(stats.changePercent) || 0;
-      const sign = percentage >= 0 ? "+" : "";
-      change.textContent = `${sign}${percentage.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}%`;
-    }
-    if (resumedAt && stats.resumedAt) {
-      resumedAt.textContent = new Date(stats.resumedAt).toLocaleDateString("pt-BR", {
-        timeZone: "America/Sao_Paulo",
-      });
-    }
 
     const activity = Array.isArray(stats.activity) ? stats.activity : [];
     if (line && activity.length) {
@@ -397,13 +459,13 @@
       const points = values
         .map((value, index) => {
           const x = 10 + (540 * index) / Math.max(values.length - 1, 1);
-          const y = maximum ? 118 - (value / maximum) * 98 : 118;
+          const y = maximum ? 176 - (value / maximum) * 142 : 176;
           return `${x},${y}`;
         })
         .join(" ");
       line.setAttribute("points", points);
       if (area) {
-        area.setAttribute("d", `M 10 136 L ${points.replace(/ /g, " L ")} L 550 136 Z`);
+        area.setAttribute("d", `M 10 184 L ${points.replace(/ /g, " L ")} L 550 184 Z`);
       }
     }
     if (dates && activity.length) {
@@ -416,9 +478,6 @@
         }),
       );
     }
-    if (status && !status.dataset.userMessage) {
-      status.textContent = `Contagem atualizada · base ${formatCount(stats.baseline)} · retomada em ${resumedAt?.textContent || "—"}.`;
-    }
   }
 
   async function loadMarketStats(market) {
@@ -430,15 +489,11 @@
       const stats = await response.json();
       if (!response.ok) throw new Error(stats.error || "Contagem indisponível.");
       updateMarket(market, stats);
-      const state = market.querySelector("[data-support-live]");
-      if (state) state.textContent = "ATUALIZADO";
     } catch {
       const status = market.querySelector("[data-support-status]");
-      const state = market.querySelector("[data-support-live]");
       if (status && !status.dataset.userMessage) {
         status.textContent = "Não foi possível carregar a contagem agora. Tente novamente mais tarde.";
       }
-      if (state) state.textContent = "INDISPONÍVEL";
     }
   }
 
@@ -446,77 +501,60 @@
     const section = document.createElement("section");
     section.id = marketId;
     section.className = "campaign-market";
-    section.setAttribute("aria-labelledby", "campaign-market-title");
+    section.setAttribute("aria-label", "Gráfico de apoios registrados");
     section.innerHTML = `
       <div class="market-shell">
-        <div class="market-topline">
-          <span>Indicador de apoio · Brasil</span>
-          <span class="market-live" data-support-live aria-live="polite">ATUALIZANDO</span>
+        <p class="market-label">Apoios registrados</p>
+        <strong class="market-count" data-support-total aria-live="polite">2.380</strong>
+        <div class="market-chart">
+          <svg viewBox="0 0 560 200" role="img" aria-label="Gráfico de apoios por dia nos últimos sete dias">
+            <defs>
+              <linearGradient id="market-chart-fill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity=".16"></stop>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path class="market-chart-grid" d="M0 42H560 M0 98H560 M0 154H560"></path>
+            <path data-support-area class="market-chart-area" d="M10 184 L10 176 L550 176 L550 184 Z"></path>
+            <polyline data-support-line class="market-chart-line" points="10,176 550,176"></polyline>
+          </svg>
+          <div class="market-dates" data-support-dates aria-hidden="true"></div>
         </div>
-        <div class="market-header">
-          <div>
-            <p class="market-eyebrow">FRENTE DE RESGATE PATRIOTA</p>
-            <h2 class="market-title" id="campaign-market-title">APOIO EM TEMPO REAL</h2>
-            <p class="market-description">Acompanhe as manifestações de apoio registradas neste site. Cada endereço IP pode ser contabilizado uma vez.</p>
-          </div>
-          <div class="market-change">
-            <span class="market-change-label">Variação desde a retomada</span>
-            <strong class="market-change-value" data-support-change>+0,00%</strong>
-            <span class="market-change-note">Base de <span data-support-baseline>2.380</span> · desde <span data-support-resumed>—</span></span>
-          </div>
-        </div>
-        <div class="market-grid">
-          <article class="market-total">
-            <p class="market-total-label">Apoios registrados</p>
-            <strong class="market-total-value" data-support-total>2.380</strong>
-            <p class="market-total-note">+<span data-support-added>0</span> desde a retomada</p>
-          </article>
-          <article class="market-chart">
-            <div class="market-chart-heading">
-              <span>Atividade de apoio</span>
-              <span class="market-chart-period">ÚLTIMOS 7 DIAS</span>
-            </div>
-            <svg viewBox="0 0 560 145" role="img" aria-label="Gráfico diário de apoios registrados">
-              <defs>
-                <linearGradient id="market-chart-fill" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stop-color="#4ade80" stop-opacity=".28"></stop>
-                  <stop offset="100%" stop-color="#4ade80" stop-opacity="0"></stop>
-                </linearGradient>
-              </defs>
-              <path class="market-chart-grid" d="M0 30H560 M0 75H560 M0 120H560"></path>
-              <path data-support-area class="market-chart-area" d="M10 136 L10 118 L550 118 L550 136 Z"></path>
-              <polyline data-support-line class="market-chart-line" points="10,118 550,118"></polyline>
-            </svg>
-            <div class="market-dates" data-support-dates aria-hidden="true"></div>
-          </article>
-          <div class="market-stats">
-            <div class="market-cell">
-              <span class="market-cell-label">Apoios hoje</span>
-              <strong class="market-cell-value" data-support-today>0</strong>
-            </div>
-            <div class="market-cell">
-              <span class="market-cell-label">Base de retomada</span>
-              <strong class="market-cell-value">2.380</strong>
-            </div>
-          </div>
-        </div>
-        <div class="market-footer">
-          <p class="market-message" data-support-status aria-live="polite">Carregando a contagem de apoio…</p>
-          <p class="market-legal">Contagem de cliques por IP · não representa votos oficiais. Redes compartilhadas podem contar usuários como um único IP.</p>
-        </div>
+        <p class="market-status" data-support-status role="status" aria-live="polite"></p>
       </div>
     `;
     return section;
   }
 
-  function addVoteHandler(link) {
-    if (link.dataset.voteHandler === "true") return;
-    link.dataset.voteHandler = "true";
-    link.addEventListener(
+  function setButtonLabel(button, label) {
+    const walker = document.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+    let textNode;
+    while ((textNode = walker.nextNode())) {
+      if (!textNode.nodeValue.trim()) continue;
+      if (normalizeText(textNode.nodeValue) !== normalizeText(label)) {
+        const trailingSpace = /\s$/.test(textNode.nodeValue) ? " " : "";
+        textNode.nodeValue = `${label}${trailingSpace}`;
+      }
+      button.setAttribute("aria-label", label);
+      return;
+    }
+    button.setAttribute("aria-label", label);
+  }
+
+  function addActionHandler(button, action) {
+    const handlerKey = action === "vote" ? "voteHandler" : "supportHandler";
+    if (button.dataset[handlerKey] === "true") return;
+    button.dataset[handlerKey] = "true";
+    button.addEventListener(
       "click",
       async (event) => {
         event.preventDefault();
         event.stopImmediatePropagation();
+        if (action === "support") {
+          window.location.assign(paymentUrl);
+          return;
+        }
+
         const market = document.getElementById(marketId);
         if (!market) return;
 
@@ -556,26 +594,19 @@
     );
   }
 
-  function replaceHeroAction(hero, sourceLabel, action, label) {
-    const existing = hero.querySelector(`[data-campaign-action="${action}"]`);
-    if (existing) {
-      if (existing.textContent !== label) existing.textContent = label;
-      return existing;
-    }
-
-    const button = Array.from(hero.querySelectorAll("button")).find(
-      (item) => normalizeText(item.textContent) === normalizeText(sourceLabel),
-    );
+  function configureHeroAction(hero, sourceLabel, action, label) {
+    const button =
+      hero.querySelector(`[data-campaign-action="${action}"]`) ||
+      Array.from(hero.querySelectorAll("button")).find(
+        (item) => normalizeText(item.textContent).includes(normalizeText(sourceLabel)),
+      );
     if (!button) return null;
 
-    const link = document.createElement("a");
-    link.className = button.className;
-    link.textContent = label;
-    link.dataset.campaignAction = action;
-    link.href = action === "support" ? paymentUrl : `#${marketId}`;
-    if (action === "vote") addVoteHandler(link);
-    button.replaceWith(link);
-    return link;
+    button.dataset.campaignAction = action;
+    button.type = "button";
+    setButtonLabel(button, label);
+    addActionHandler(button, action);
+    return button;
   }
 
   function applyCampaignLayout(language) {
@@ -588,7 +619,17 @@
     ensureMarketStyles();
     hero.id = "campaign-hero";
     hero.classList.add("campaign-hero");
-    hero.querySelector(".scroll-indicator")?.remove();
+    const appShell = Array.from(root.children).find(
+      (child) => child.classList.contains("min-h-screen") && child.classList.contains("bg-background"),
+    );
+    if (appShell) {
+      appShell.classList.add("campaign-app-shell");
+    }
+    const scrollIndicator = hero.querySelector(".scroll-indicator");
+    if (scrollIndicator) {
+      scrollIndicator.dataset.campaignHidden = "true";
+      scrollIndicator.setAttribute("aria-hidden", "true");
+    }
     const actions = hero.querySelector(".mt-10.flex");
     if (actions) {
       actions.style.opacity = "1";
@@ -598,28 +639,27 @@
     let market = document.getElementById(marketId);
     if (!market) {
       market = createMarketSection();
-      const reserveSection = sections.find((section) =>
-        normalizeText(section.textContent).includes("reserve seu link"),
-      );
-      if (reserveSection) reserveSection.replaceWith(market);
-      else hero.insertAdjacentElement("afterend", market);
+      document.body.appendChild(market);
     }
 
     const labels =
       language === "PT"
         ? { support: "APOIE", vote: "VOTE" }
         : { support: "SUPPORT", vote: "VOTE" };
-    replaceHeroAction(hero, "Criar seu perfil", "support", labels.support);
-    const voteLink = replaceHeroAction(hero, "Explorar perfis", "vote", labels.vote);
-    if (voteLink) {
-      voteLink.href = `#${marketId}`;
-      addVoteHandler(voteLink);
-    }
+    configureHeroAction(hero, "Criar seu perfil", "support", labels.support);
+    configureHeroAction(hero, "Explorar perfis", "vote", labels.vote);
 
     root.querySelectorAll("section").forEach((section) => {
-      if (section !== hero && section !== market) section.remove();
+      if (section !== hero) {
+        section.dataset.campaignHidden = "true";
+        section.setAttribute("aria-hidden", "true");
+      }
     });
-    root.querySelector("footer")?.remove();
+    const footer = root.querySelector("footer");
+    if (footer) {
+      footer.dataset.campaignHidden = "true";
+      footer.setAttribute("aria-hidden", "true");
+    }
 
     if (market.dataset.counterInitialized !== "true") {
       market.dataset.counterInitialized = "true";

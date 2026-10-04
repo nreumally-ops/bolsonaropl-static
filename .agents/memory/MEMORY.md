@@ -1,1 +1,2 @@
 - [Commit cadence](commit-cadence.md) — o usuário quer cada alteração deste repositório registrada em commit.
+- [DOM React da home](homepage-react-dom.md) — preserve botões e esconda seções com CSS; não remova nós que o React reconcilia.
