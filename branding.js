@@ -353,14 +353,14 @@
         font-size: 10px;
       }
       .market-status {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        clip-path: inset(50%);
+        min-height: 1.4em;
+        margin: 16px 0 0;
+        color: #b7c9ba;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .market-status:empty {
+        display: none;
       }
       @media (max-width: 780px) {
         #root section.campaign-hero {
@@ -566,6 +566,11 @@
           status.textContent = "Registrando a manifestação de apoio…";
         }
 
+        if (button.dataset.votePending === "true") return;
+        button.dataset.votePending = "true";
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+
         try {
           const response = await fetch("/api/support-count", {
             method: "POST",
@@ -580,7 +585,7 @@
           if (status) {
             status.dataset.userMessage = "true";
             status.textContent = result.recorded
-              ? "Apoio registrado. O total considera uma manifestação por endereço IP."
+              ? "Apoio registrado. O contador considera um registro por endereço IP e não altera o resultado oficial da eleição."
               : "Este endereço IP já foi contabilizado; o total não mudou.";
           }
         } catch (error) {
@@ -588,6 +593,10 @@
             status.dataset.userMessage = "true";
             status.textContent = error.message || "Não foi possível registrar o apoio agora.";
           }
+        } finally {
+          button.disabled = false;
+          button.removeAttribute("aria-busy");
+          delete button.dataset.votePending;
         }
       },
       { capture: true },
@@ -644,7 +653,7 @@
 
     const labels =
       language === "PT"
-        ? { support: "APOIE", vote: "VOTE" }
+        ? { support: "APOIE", vote: "VOTAR" }
         : { support: "SUPPORT", vote: "VOTE" };
     configureHeroAction(hero, "Criar seu perfil", "support", labels.support);
     configureHeroAction(hero, "Explorar perfis", "vote", labels.vote);

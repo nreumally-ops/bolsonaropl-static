@@ -27,6 +27,40 @@ PUBLIC_FILES = {
 PUBLIC_FILES.add("branding.js")
 
 
+def open_database_connection():
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is required for the support counter.")
+    return psycopg.connect(database_url)
+
+
+def ensure_support_schema(cursor):
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS public.campaign_support_baseline (
+            singleton BOOLEAN PRIMARY KEY DEFAULT TRUE CHECK (singleton),
+            baseline_count BIGINT NOT NULL CHECK (baseline_count >= 0),
+            resumed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+        """
+    )
+    cursor.execute(
+        """
+        INSERT INTO public.campaign_support_baseline (singleton, baseline_count)
+        VALUES (TRUE, 2380)
+        ON CONFLICT (singleton) DO NOTHING
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS public.campaign_support_votes (
+            ip_hash TEXT PRIMARY KEY,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+        """
+    )
+
+
 class SiteHandler(SimpleHTTPRequestHandler):
     def send_json(self, status, payload):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -69,8 +103,9 @@ class SiteHandler(SimpleHTTPRequestHandler):
         first_day = today_start.date() - timedelta(days=6)
         week_start = datetime.combine(first_day, datetime.min.time(), tzinfo=BRAZIL_TIME)
 
-        with psycopg.connect() as connection:
+        with open_database_connection() as connection:
             with connection.cursor() as cursor:
+                ensure_support_schema(cursor)
                 cursor.execute(
                     """
                     SELECT baseline.baseline_count,
@@ -163,8 +198,9 @@ class SiteHandler(SimpleHTTPRequestHandler):
 
         try:
             ip_hash = self.get_client_ip_hash()
-            with psycopg.connect() as connection:
+            with open_database_connection() as connection:
                 with connection.cursor() as cursor:
+                    ensure_support_schema(cursor)
                     cursor.execute(
                         """
                         INSERT INTO public.campaign_support_votes (ip_hash)
