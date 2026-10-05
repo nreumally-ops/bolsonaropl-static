@@ -362,6 +362,59 @@
       .market-status:empty {
         display: none;
       }
+      .market-official-result {
+        margin: 0 0 30px;
+        padding: 20px 0 24px;
+        border-block: 1px solid rgba(255, 255, 255, 0.14);
+      }
+      .market-official-label {
+        margin: 0;
+        color: #79e69a;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .market-official-main {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 18px;
+        margin-top: 12px;
+      }
+      .market-official-candidate {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(19px, 3vw, 27px);
+        font-weight: 700;
+      }
+      .market-official-votes {
+        color: #fff;
+        font-size: clamp(24px, 4vw, 36px);
+        font-variant-numeric: tabular-nums;
+        font-weight: 750;
+        letter-spacing: -0.04em;
+        white-space: nowrap;
+      }
+      .market-official-share,
+      .market-official-source {
+        margin: 7px 0 0;
+        color: #aab8ad;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .market-official-source a {
+        color: #c6f3d0;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .market-online-note {
+        max-width: 680px;
+        margin: 12px 0 0;
+        color: #89978d;
+        font-size: 12px;
+        line-height: 1.6;
+      }
       @media (max-width: 780px) {
         #root section.campaign-hero {
           min-height: min(720px, 84svh) !important;
@@ -373,6 +426,11 @@
         }
         .market-change {
           text-align: left;
+        }
+        .market-official-main {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 3px;
         }
         .market-grid {
           grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
@@ -504,8 +562,25 @@
     section.setAttribute("aria-label", "Gráfico de apoios registrados");
     section.innerHTML = `
       <div class="market-shell">
-        <p class="market-label">Apoios registrados</p>
+        <div class="market-official-result">
+          <p class="market-official-label">Resultado oficial · Eleições 2026 · 1º turno</p>
+          <div class="market-official-main">
+            <div>
+              <p class="market-official-candidate">Flávio Bolsonaro</p>
+              <p class="market-official-share">47,03% dos votos válidos</p>
+            </div>
+            <strong class="market-official-votes">56.104.268 votos</strong>
+          </div>
+          <p class="market-official-source">
+            TSE: apuração até 00h11 de 05/10/2026, com 99,99% das urnas apuradas.
+            A votação presidencial consolidada inclui Brasil e exterior.
+            <a href="https://www.tse.jus.br/comunicacao/noticias/2026/Outubro/flavio-bolsonaro-e-lula-vao-disputar-o-2o-turno-para-a-presidencia-da-republica" target="_blank" rel="noopener noreferrer">Ver resultado no TSE</a>
+            · <a href="https://www.tse.jus.br/comunicacao/noticias/2026/Agosto/resultados-das-eleicoes-2026-poderao-ser-acompanhados-em-tempo-real" target="_blank" rel="noopener noreferrer">sobre a votação no exterior</a>
+          </p>
+        </div>
+        <p class="market-label">Apoios online registrados neste site</p>
         <strong class="market-count" data-support-total aria-live="polite">2.380</strong>
+        <p class="market-online-note">O botão VOTAR registra um apoio neste site, uma vez por endereço IP. Esses registros não são votos eleitorais e não alteram o resultado oficial acima.</p>
         <div class="market-chart">
           <svg viewBox="0 0 560 200" role="img" aria-label="Gráfico de apoios por dia nos últimos sete dias">
             <defs>
