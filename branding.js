@@ -569,13 +569,13 @@
               <p class="market-official-candidate">Flávio Bolsonaro</p>
               <p class="market-official-share">47,03% dos votos válidos</p>
             </div>
-            <strong class="market-official-votes">56.104.268 votos</strong>
+            <strong class="market-official-votes">56.104.503 votos</strong>
           </div>
           <p class="market-official-source">
-            TSE: apuração até 00h11 de 05/10/2026, com 99,99% das urnas apuradas.
-            A votação presidencial consolidada inclui Brasil e exterior.
-            <a href="https://www.tse.jus.br/comunicacao/noticias/2026/Outubro/flavio-bolsonaro-e-lula-vao-disputar-o-2o-turno-para-a-presidencia-da-republica" target="_blank" rel="noopener noreferrer">Ver resultado no TSE</a>
-            · <a href="https://www.tse.jus.br/comunicacao/noticias/2026/Agosto/resultados-das-eleicoes-2026-poderao-ser-acompanhados-em-tempo-real" target="_blank" rel="noopener noreferrer">sobre a votação no exterior</a>
+            Arquivo final do TSE, atualizado em 05/10/2026 às 12h51:
+            499.207 de 499.248 seções totalizadas (99,99%). A votação presidencial consolidada inclui Brasil e exterior.
+            <a href="https://resultados.tse.jus.br/oficial/app/index.html#/eleicao/6257/uf/br/cargo/1/vis/nominal/resultados" target="_blank" rel="noopener noreferrer">Ver resultados no TSE</a>
+            · <a href="https://resultados.tse.jus.br/oficial/ele2026/6257/dados/br/br-c0001-e006257-u.json" target="_blank" rel="noopener noreferrer">arquivo oficial</a>
           </p>
         </div>
         <p class="market-label">Apoios online registrados neste site</p>
